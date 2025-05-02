@@ -18,6 +18,7 @@ import numpy as np
 from scipy.constants import G
 
 data = np.genfromtxt('M104.txt', delimiter=',')
+radius = 4.6    # M104 = 4.6, UGC 4972 = 9.3, NGC = 6.8
 
 # finding the velocity
 def findingRedshift(lambda_observed, lambda_rest):
@@ -36,7 +37,6 @@ def listOfRedfshits(data):
     return redshift, velocities
 
 redshifts, velocities = listOfRedfshits(data)
-print(redshifts)
 
 print("redshift:", np.average(redshifts))
 
@@ -51,9 +51,9 @@ def errorConstruction(velocitiesErr):
 
 bars = np.abs(errorConstruction(velocitiesErr))
 
-def plotVelocities(velocities, bars):
+def plotVelocities(velocities, bars, radius):
     # Generate position values (symmetric slit)
-    distance_kpc = np.linspace(-4.6 / 1.085 , 4.6 * 1.085  , len(velocities)) 
+    distance_kpc = np.linspace(-radius / 1.085 , radius * 1.085  , len(velocities)) 
     velocities = np.array(velocities) / 1000  # Convert to km/s
     bars = np.array(bars) / (3*1000)
 
@@ -111,7 +111,7 @@ def plotVelocities(velocities, bars):
     v_flat = v_flat
     return v_flat
 
-v = plotVelocities(velocities, bars)
+v = plotVelocities(velocities, bars, radius)
 
 def TotalMassCalculation(v, r):
     newr = r * 3.086*10**(19) #in m
@@ -122,7 +122,7 @@ def TotalMassCalculation(v, r):
 def convertToSolarMasses(tm):
     return tm/(1.989*10**(30))
 
-# print("Total stellar mass:", convertToSolarMasses(TotalMassCalculation(v, 4.6)))
+print("Total stellar mass:", convertToSolarMasses(TotalMassCalculation(v, radius)))
 
 # Specifically for UGC4972
 def irregularGalaxyVel(data, errors):
